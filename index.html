@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aushak Anuj Dendukuri</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Shadows+Into+Light&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="canvas-container">
+        <!-- Background canvas for city simulation -->
+        <canvas id="bgCanvas" role="presentation" aria-hidden="true"></canvas>
+        <!-- Foreground canvas for crosshairs -->
+        <canvas id="uiCanvas" role="presentation" aria-hidden="true"></canvas>
+    </div>
+
+    <!-- Coordinates Tooltip using Glassmorphism -->
+    <div id="coordTooltip" class="glass-tooltip">
+        X: <span id="xCoord">0</span> <span class="separator">|</span> Y: <span id="yCoord">0</span>
+    </div>
+
+    <!-- Main Content overlay -->
+    <main class="content-overlay">
+        <!-- HERO -->
+        <header class="glass-header" id="hero">
+            <div class="logo-container">
+                <div class="logo-wrap">
+                    <h1 class="logo" id="logoText">Aushak Anuj</h1>
+                    <span class="logo-surname">Dendukuri</span>
+                </div>
+            </div>
+            <nav class="glass-nav">
+                <div class="nav-item">
+                    <button class="nav-dot" aria-label="About"></button>
+                    <div class="nav-reveal">
+                        <svg class="doodle-arrow" viewBox="0 0 100 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                            <path class="arrow-path" d="" fill="none" stroke="#e74c3c" stroke-width="5.0" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span class="doodle-text">About</span>
+                    </div>
+                </div>
+                <div class="nav-item">
+                    <button class="nav-dot" aria-label="Work"></button>
+                    <div class="nav-reveal">
+                        <svg class="doodle-arrow" viewBox="0 0 100 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                            <path class="arrow-path" d="" fill="none" stroke="#f39c12" stroke-width="5.0" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span class="doodle-text">Work</span>
+                    </div>
+                </div>
+                <div class="nav-item">
+                    <button class="nav-dot" aria-label="Photos"></button>
+                    <div class="nav-reveal">
+                        <svg class="doodle-arrow" viewBox="0 0 100 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                            <path class="arrow-path" d="" fill="none" stroke="#3498db" stroke-width="5.0" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span class="doodle-text">Photos</span>
+                    </div>
+                </div>
+                <div class="nav-item">
+                    <button class="nav-dot" aria-label="Contact"></button>
+                    <div class="nav-reveal">
+                        <svg class="doodle-arrow" viewBox="0 0 100 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                            <path class="arrow-path" d="" fill="none" stroke="#27ae60" stroke-width="5.0" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span class="doodle-text">Contact</span>
+                    </div>
+                </div>
+            </nav>
+        </header>
+
+        <!-- Hero glass panel -->
+        <div class="hero">
+            <div class="glass-panel" data-reveal>
+                <p class="subtitle">Reliability Engineer · BlackRock · Mumbai</p>
+                <div class="hero-text">
+                    <h2>Aushak Anuj<br>Dendukuri</h2>
+                    <p>Building reliable systems — and researching how cities can move better.</p>
+                    <button class="glass-button" onclick="document.getElementById('about').scrollIntoView({behavior:'smooth'})">See my work ↓</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ABOUT -->
+        <section class="section" id="about">
+            <div class="about-card glass-panel" data-reveal>
+                <p class="subtitle">About me</p>
+                <div class="about-grid">
+                    <div class="about-left">
+                        <p class="about-bio">
+                            Mumbai/Hyderabad-based Reliability Engineer passionate about infrastructure resilience and urban improvement.
+                            My goal is to contribute meaningfully to India — through better systems, smarter cities, and technology that solves real problems.
+                            Currently pursuing <strong>ISB AMPBA</strong> (Advanced Management Programme in Business Analytics) and researching
+                            urban traffic &amp; commute optimisation as my next area of focus.
+                            B.Tech ECE (IoT specialisation), VIT Vellore, May 2021 · CGPA 8.1.
+                        </p>
+                        <div class="skills-section">
+                            <p class="skills-label">Skills</p>
+                            <div class="skills-pills">
+                                <span class="skill-pill">Ansible</span>
+                                <span class="skill-pill">AWX</span>
+                                <span class="skill-pill">Python</span>
+                                <span class="skill-pill">PowerShell</span>
+                                <span class="skill-pill">Go</span>
+                                <span class="skill-pill">Azure Pipelines</span>
+                                <span class="skill-pill">Power BI</span>
+                                <span class="skill-pill">Grafana</span>
+                                <span class="skill-pill">Splunk</span>
+                                <span class="skill-pill">SQL</span>
+                                <span class="skill-pill">Linux Admin</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="about-right">
+                        <p class="skills-label">Interests</p>
+                        <ul class="interests-list">
+                            <li>Urban planning &amp; city commute research</li>
+                            <li>Environmental impact &amp; sustainability</li>
+                            <li>Food photography <span class="insta-handle">@_aushakanuz</span></li>
+                            <li>Fitness &amp; training</li>
+                            <li>Gardening &amp; cooking</li>
+                            <li>Travel &amp; science</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- WORK -->
+        <section class="section" id="work">
+            <div class="work-container" data-reveal>
+                <p class="subtitle section-label">Experience</p>
+                <div class="timeline">
+
+                    <div class="timeline-card glass-panel">
+                        <div class="timeline-header">
+                            <div>
+                                <h3 class="company-name">BlackRock</h3>
+                                <p class="role-title">Associate Engineer I · Reliability Engineering</p>
+                            </div>
+                            <span class="date-range">Jul 2023 – Present</span>
+                        </div>
+                        <ul class="timeline-bullets">
+                            <li>Led DR automation with Azure Pipelines, AWX &amp; Ansible — reduced failover time from 5–6 hrs to ~2.25 hrs</li>
+                            <li>Built the DR codebase from scratch; drove chaos engineering &amp; disaster recovery initiatives firm-wide</li>
+                        </ul>
+                    </div>
+
+                    <div class="timeline-card glass-panel">
+                        <div class="timeline-header">
+                            <div>
+                                <h3 class="company-name">Tata Consultancy Services</h3>
+                                <p class="role-title">Systems Engineer · Cloud</p>
+                            </div>
+                            <span class="date-range">Aug 2021 – Jul 2023</span>
+                        </div>
+                        <ul class="timeline-bullets">
+                            <li>Azure cloud engineering, RBAC governance, and ADLS scripting &amp; automation</li>
+                            <li>Infrastructure provisioning and access management across enterprise Azure tenants</li>
+                        </ul>
+                    </div>
+
+                    <div class="timeline-card glass-panel">
+                        <div class="timeline-header">
+                            <div>
+                                <h3 class="company-name">Kimberly-Clark</h3>
+                                <p class="role-title">Engineering Intern</p>
+                            </div>
+                            <span class="date-range">Jan 2021 – Jun 2021</span>
+                        </div>
+                        <ul class="timeline-bullets">
+                            <li>SAP integration, Python automation pipelines, and Power BI dashboard development</li>
+                        </ul>
+                    </div>
+
+                    <div class="timeline-card glass-panel">
+                        <div class="timeline-header">
+                            <div>
+                                <h3 class="company-name">Find Mind Analytics</h3>
+                                <p class="role-title">Backend Intern</p>
+                            </div>
+                            <span class="date-range">Jun 2020 – Dec 2020</span>
+                        </div>
+                        <ul class="timeline-bullets">
+                            <li>FastAPI backend development and payment gateway integration</li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- PHOTOS -->
+        <section class="section" id="photos">
+            <div class="photos-container" data-reveal>
+                <p class="subtitle section-label">Through the lens.</p>
+                <!-- Add your photos to the images/ folder and update the src attributes below.
+                     Supported formats: .jpg .jpeg .webp .png
+                     Missing images are hidden automatically. -->
+                <div class="photo-gallery">
+                    <div class="photo-card">
+                        <img src="images/photo-1.jpg" alt="Photo 1" onerror="this.parentElement.style.display='none'">
+                    </div>
+                    <div class="photo-card">
+                        <img src="images/photo-2.jpg" alt="Photo 2" onerror="this.parentElement.style.display='none'">
+                    </div>
+                    <div class="photo-card">
+                        <img src="images/photo-3.jpg" alt="Photo 3" onerror="this.parentElement.style.display='none'">
+                    </div>
+                    <div class="photo-card">
+                        <img src="images/photo-4.jpg" alt="Photo 4" onerror="this.parentElement.style.display='none'">
+                    </div>
+                    <div class="photo-card">
+                        <img src="images/photo-5.jpg" alt="Photo 5" onerror="this.parentElement.style.display='none'">
+                    </div>
+                    <div class="photo-card">
+                        <img src="images/photo-6.jpg" alt="Photo 6" onerror="this.parentElement.style.display='none'">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONTACT -->
+        <section class="section" id="contact">
+            <div class="contact-card glass-panel" data-reveal>
+                <p class="subtitle">Get in touch</p>
+                <h2 class="contact-heading">Let's talk.</h2>
+                <div class="contact-links">
+                    <a href="mailto:aushakanuj@gmail.com" class="contact-link">
+                        <span class="contact-icon">✉</span>
+                        aushakanuj@gmail.com
+                    </a>
+                    <a href="https://linkedin.com/in/aushakanuj" target="_blank" rel="noopener" class="contact-link">
+                        <span class="contact-icon">in</span>
+                        linkedin.com/in/aushakanuj
+                    </a>
+                    <a href="tel:+918270800575" class="contact-link">
+                        <span class="contact-icon">↗</span>
+                        +91 82708 00575
+                    </a>
+                </div>
+                <footer class="site-footer">
+                    © 2025 Aushak Anuj Dendukuri
+                </footer>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Custom Cursor -->
+    <div id="customCursor">
+        <div class="cursor-icon"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
