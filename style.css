@@ -88,17 +88,17 @@ button.nav-dot {
     top: 0; left: 0;
     pointer-events: none;
     z-index: 10000;
-    transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: transform 0.08s ease-out;
 }
 
 .cursor-icon {
-    width: var(--cursor-size);
-    height: var(--cursor-size);
-    transform: translate(-2px, -18px);
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z'/%3E%3C/svg%3E");
+    width: 24px;
+    height: 24px;
+    transform: translate(-12px, -12px);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none'%3E%3Cg stroke='%238B7765' stroke-width='1.2' opacity='0.55'%3E%3Cline x1='12' y1='2' x2='12' y2='9'/%3E%3Cline x1='12' y1='15' x2='12' y2='22'/%3E%3Cline x1='2' y1='12' x2='9' y2='12'/%3E%3Cline x1='15' y1='12' x2='22' y2='12'/%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3C/g%3E%3C/svg%3E");
     background-size: contain;
     background-repeat: no-repeat;
-    background-position: bottom left;
+    background-position: center;
     transition:
         width 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275),
         height 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275),
@@ -109,12 +109,12 @@ button.nav-dot {
 }
 
 .cursor-icon.magnetic {
-    width: calc(var(--cursor-size-magnetic) * 1.15);
+    width: var(--cursor-size-magnetic);
     height: var(--cursor-size-magnetic);
-    transform: translate(-24px, -22px);
+    transform: translate(-22px, -22px);
     background-image: none;
     background-color: rgba(0, 0, 0, 0.08);
-    border-radius: 12px;
+    border-radius: 50%;
     backdrop-filter: blur(var(--blur-sm));
     -webkit-backdrop-filter: blur(var(--blur-sm));
     box-shadow: var(--shadow-soft);
@@ -127,6 +127,7 @@ button.nav-dot {
     left: 0;
     width: 100vw;
     height: 100vh;
+    height: -webkit-fill-available; /* iOS Safari fix */
     z-index: 1;
 }
 
@@ -143,23 +144,29 @@ canvas {
 .glass-tooltip {
     position: fixed;
     top: 0; left: 0;
-    padding: 8px 16px;
-    background: var(--glass-bg);
-    backdrop-filter: blur(var(--blur-md));
-    -webkit-backdrop-filter: blur(var(--blur-md));
-    border: 1px solid var(--glass-border);
-    border-radius: var(--radius-tooltip);
-    font-size: 11px;
+    padding: 6px 12px;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 8px;
+    font-size: 10px;
     font-weight: 500;
-    color: var(--text-primary);
-    letter-spacing: 1.5px;
+    color: rgba(0, 0, 0, 0.5);
+    letter-spacing: 0.5px;
     pointer-events: none;
     z-index: 100;
     transform: translate(-100px, -100px);
     transition: opacity 0.3s ease, background 0.5s ease, border-color 0.5s ease, color 0.5s ease;
     opacity: 0;
-    box-shadow: var(--shadow-soft);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
     font-variant-numeric: tabular-nums;
+    font-family: 'Inter', sans-serif;
+}
+
+.coord-label {
+    opacity: 0.6;
+    margin-right: 2px;
 }
 
 body:hover .glass-tooltip {
@@ -234,14 +241,17 @@ body:hover .glass-tooltip {
 
 .glass-nav {
     display: flex;
-    gap: 40px;
-    background: rgba(210, 205, 195, 0.82);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    padding: 16px 48px;
+    gap: 28px;
+    background: rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(1px);
+    -webkit-backdrop-filter: blur(1px);
+    padding: 16px 40px;
     border-radius: 50px;
-    border: 1px solid rgba(255, 255, 255, 0.45);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 
+        0 4px 20px rgba(0, 0, 0, 0.08),
+        0 8px 32px rgba(0, 0, 0, 0.06),
+        inset 0 1px 1px rgba(255, 255, 255, 0.6);
     align-items: center;
     transition: background 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
 }
@@ -268,49 +278,50 @@ body:hover .glass-tooltip {
     display: block;
     width: 16px;
     height: 16px;
-    background-color: rgba(110, 105, 100, 0.85);
-    border-radius: 6px;
+    background: #faf8f5;
+    border-radius: 50%;
     transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
                 transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
                 box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: inset 0 -2px 4px rgba(0,0,0,0.3), inset 0 2px 4px rgba(255,255,255,0.15), 0 1px 2px rgba(0,0,0,0.1);
+    box-shadow: 
+        inset 0 1px 2px rgba(255,255,255,1),
+        0 2px 6px rgba(0,0,0,0.12),
+        0 4px 12px rgba(0,0,0,0.08),
+        0 8px 20px rgba(0,0,0,0.04);
     position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.8);
 }
 
 /* 1. About — Red */
 .nav-item:nth-child(1):hover .nav-dot,
 .nav-item:nth-child(1):focus-within .nav-dot {
     background-color: #e74c3c;
-    transform: scale(1.25);
-    box-shadow: 0 0 14px rgba(231, 76, 60, 0.6), inset 0 2px 4px rgba(255,255,255,0.35);
-    border-radius: 8px;
+    transform: scale(1.3);
+    box-shadow: 0 0 12px rgba(231, 76, 60, 0.55), inset 0 2px 4px rgba(255,255,255,0.35);
 }
 
 /* 2. Work — Yellow */
 .nav-item:nth-child(2):hover .nav-dot,
 .nav-item:nth-child(2):focus-within .nav-dot {
     background-color: #f39c12;
-    transform: scale(1.25);
-    box-shadow: 0 0 14px rgba(243, 156, 18, 0.6), inset 0 2px 4px rgba(255,255,255,0.35);
-    border-radius: 8px;
+    transform: scale(1.3);
+    box-shadow: 0 0 12px rgba(243, 156, 18, 0.55), inset 0 2px 4px rgba(255,255,255,0.35);
 }
 
 /* 3. Photos — Blue */
 .nav-item:nth-child(3):hover .nav-dot,
 .nav-item:nth-child(3):focus-within .nav-dot {
     background-color: #3498db;
-    transform: scale(1.25);
-    box-shadow: 0 0 14px rgba(52, 152, 219, 0.6), inset 0 2px 4px rgba(255,255,255,0.35);
-    border-radius: 8px;
+    transform: scale(1.3);
+    box-shadow: 0 0 12px rgba(52, 152, 219, 0.55), inset 0 2px 4px rgba(255,255,255,0.35);
 }
 
 /* 4. Contact — Green */
 .nav-item:nth-child(4):hover .nav-dot,
 .nav-item:nth-child(4):focus-within .nav-dot {
     background-color: #27ae60;
-    transform: scale(1.25);
-    box-shadow: 0 0 14px rgba(39, 174, 96, 0.6), inset 0 2px 4px rgba(255,255,255,0.35);
-    border-radius: 8px;
+    transform: scale(1.3);
+    box-shadow: 0 0 12px rgba(39, 174, 96, 0.55), inset 0 2px 4px rgba(255,255,255,0.35);
 }
 
 .nav-dot:focus-visible {
@@ -755,12 +766,24 @@ body:hover .glass-tooltip {
 /* ─── MOBILE RESPONSIVE ─── */
 @media (max-width: 480px) {
     .canvas-container {
-        display: none;
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        height: -webkit-fill-available;
+        z-index: 1;
+        touch-action: none;
     }
 
     body {
         background-color: var(--bg-color);
         cursor: auto !important;
+        touch-action: none;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        user-select: none;
     }
 
     a, button, input, .nav-item, .nav-dot {
@@ -768,6 +791,10 @@ body:hover .glass-tooltip {
     }
 
     #customCursor {
+        display: none;
+    }
+    
+    #coordTooltip {
         display: none;
     }
 
@@ -788,8 +815,16 @@ body:hover .glass-tooltip {
     }
 
     .glass-nav {
-        gap: 16px;
-        padding: 8px 16px;
+        gap: 20px;
+        padding: 12px 24px;
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(4px);
+    }
+    
+    .nav-dot {
+        width: 14px;
+        height: 14px;
+        background: rgba(255, 255, 255, 0.9);
     }
 
     .hero {
@@ -841,4 +876,33 @@ body:hover .glass-tooltip {
     .doodle-text {
         font-size: 18px;
     }
+}
+
+/* Mobile drawing hint */
+.mobile-hint {
+    display: none;
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(8px);
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-size: 13px;
+    color: rgba(0, 0, 0, 0.6);
+    z-index: 50;
+    animation: fadeInOut 4s ease-in-out forwards;
+    pointer-events: none;
+}
+
+@media (max-width: 480px) {
+    .mobile-hint {
+        display: block;
+    }
+}
+
+@keyframes fadeInOut {
+    0%, 100% { opacity: 0; }
+    20%, 80% { opacity: 1; }
 }

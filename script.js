@@ -3,8 +3,8 @@ const uiCanvas = document.getElementById('uiCanvas');
 const bgCtx = bgCanvas.getContext('2d');
 const uiCtx = uiCanvas.getContext('2d');
 const coordTooltip = document.getElementById('coordTooltip');
-const xCoordSpan = document.getElementById('xCoord');
-const yCoordSpan = document.getElementById('yCoord');
+const nCoordSpan = document.getElementById('nCoord');
+const eCoordSpan = document.getElementById('eCoord');
 const customCursor = document.getElementById('customCursor');
 const cursorIcon = document.querySelector('.cursor-icon');
 
@@ -23,9 +23,10 @@ let magneticCenter = { x: 0, y: 0 };
 
 // Configuration options
 const GRID_SIZE = 40; // Scale of the drawing board grid
-const GRID_COLOR = 'rgba(0, 0, 0, 0.04)';
-const CROSSHAIR_COLOR = 'rgba(0, 0, 0, 0.25)';
-const DRAWING_COLOR = 'rgba(0, 0, 0, 0.12)'; // Restored for random drawings
+const GRID_COLOR = 'rgba(139, 119, 101, 0.15)'; // Aesthetic brown
+const GRID_HIGHLIGHT_COLOR = 'rgba(139, 119, 101, 0.4)'; // Darker brown for highlight
+const CROSSHAIR_COLOR = 'rgba(139, 119, 101, 0.35)';
+const DRAWING_COLOR = 'rgba(139, 119, 101, 0.18)'; // Restored for random drawings
 const VANISH_TIME = 15000; // Time in ms before a point fully vanishes (15 seconds)
 
 // Active sketches engines
@@ -61,13 +62,14 @@ function resize() {
 function drawGrid() {
     bgCtx.clearRect(0, 0, width, height);
 
+    // Draw grid lines
     bgCtx.beginPath();
     bgCtx.strokeStyle = GRID_COLOR;
     bgCtx.lineWidth = 1;
 
     // Draw vertical grid lines
     for (let x = 0; x <= width; x += GRID_SIZE) {
-        bgCtx.moveTo(x + 0.5, 0); // 0.5 offset makes lines exactly 1 pixel and crisp
+        bgCtx.moveTo(x + 0.5, 0);
         bgCtx.lineTo(x + 0.5, height);
     }
     // Draw horizontal grid lines
@@ -76,6 +78,36 @@ function drawGrid() {
         bgCtx.lineTo(width, y + 0.5);
     }
     bgCtx.stroke();
+
+    // Draw weighted grid dots at intersections
+    const influenceRadius = 120;
+    
+    for (let x = 0; x <= width; x += GRID_SIZE) {
+        for (let y = 0; y <= height; y += GRID_SIZE) {
+            // Calculate distance from cursor
+            const dx = mouseX - x;
+            const dy = mouseY - y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            if (distance < influenceRadius) {
+                // Calculate opacity based on proximity (closer = darker)
+                const proximity = 1 - (distance / influenceRadius);
+                const opacity = 0.15 + (proximity * 0.5); // Base 0.15 to max 0.65
+                const dotSize = 1.5 + (proximity * 2.5); // Base 1.5px to max 4px
+                
+                bgCtx.beginPath();
+                bgCtx.fillStyle = `rgba(139, 119, 101, ${opacity})`;
+                bgCtx.arc(x, y, dotSize, 0, Math.PI * 2);
+                bgCtx.fill();
+            } else {
+                // Draw faint base dot
+                bgCtx.beginPath();
+                bgCtx.fillStyle = 'rgba(139, 119, 101, 0.12)';
+                bgCtx.arc(x, y, 1.5, 0, Math.PI * 2);
+                bgCtx.fill();
+            }
+        }
+    }
 }
 
 // --- ARCHITECTURAL SKETCH CHOREOGRAPHY ENGINE ---
@@ -1850,9 +1882,17 @@ function updateUI() {
         uiCtx.setLineDash([]); // Reset line dash
         
         // Update DOM tooltip
-        coordTooltip.style.transform = `translate(${targetMouseX + 24}px, ${targetMouseY + 24}px)`;
-        xCoordSpan.textContent = Math.round(targetMouseX);
-        yCoordSpan.textContent = Math.round(targetMouseY);
+        coordTooltip.style.transform = `translate(${targetMouseX - 20}px, ${targetMouseY + 28}px)`;
+        // Convert mouse position to fake GPS coordinates
+        const nDeg = 17;
+        const nMin = 22 + Math.floor((targetMouseY / height) * 60);
+        const nSec = Math.floor(((targetMouseY / height) * 60 % 1) * 100);
+        const eDeg = 78;
+        const eMin = 29 + Math.floor((targetMouseX / width) * 60);
+        const eSec = Math.floor(((targetMouseX / width) * 60 % 1) * 100);
+        
+        nCoordSpan.textContent = `${nDeg}°${nMin.toString().padStart(2, '0')}.${nSec.toString().padStart(2, '0')}'`;
+        eCoordSpan.textContent = `${eDeg}°${eMin.toString().padStart(2, '0')}.${eSec.toString().padStart(2, '0')}'`;
     } else {
         // Just hide the tooltip completely if it's out of bounds
         coordTooltip.style.opacity = '0';
@@ -1980,10 +2020,18 @@ function generateDoodlePath() {
 // Event Listeners
 window.addEventListener('resize', resize);
 
+// Handle mobile viewport changes (keyboard, browser chrome)
+if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', () => {
+        // Small delay to let the browser settle
+        setTimeout(resize, 100);
+    });
+}
+
 document.querySelectorAll('.nav-item').forEach(item => {
     const pathElement = item.querySelector('.arrow-path');
     
-    item.addEventListener('mouseenter', () => {
+    const activateNavItem = () => {
         isMagnetic = true;
         cursorIcon.classList.add('magnetic');
         
@@ -2006,12 +2054,27 @@ document.querySelectorAll('.nav-item').forEach(item => {
             void pathElement.offsetWidth; 
             pathElement.style.animation = 'drawPath 0.6s ease-out forwards 0.1s';
         }
-    });
+    };
     
-    item.addEventListener('mouseleave', () => {
+    const deactivateNavItem = () => {
         isMagnetic = false;
         cursorIcon.classList.remove('magnetic');
-    });
+    };
+    
+    item.addEventListener('mouseenter', activateNavItem);
+    item.addEventListener('mouseleave', deactivateNavItem);
+    
+    // Mobile touch support for nav items
+    item.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        activateNavItem();
+        
+        // Trigger click after short delay for visual feedback
+        setTimeout(() => {
+            const dot = item.querySelector('.nav-dot');
+            if (dot) dot.click();
+        }, 100);
+    }, { passive: false });
 });
 
 // Smooth a path using multiple passes of weighted moving averages
@@ -2103,6 +2166,56 @@ window.addEventListener('mouseup', (e) => {
     if (isDrawing && currentDrawing && rawDrawingPoints.length > 0) {
         // Add final point
         rawDrawingPoints.push({ x: e.clientX, y: e.clientY, t: Date.now() });
+        
+        // Smooth the path
+        const smoothed = smoothPath(rawDrawingPoints);
+        
+        // Replace raw points with smoothed points
+        currentDrawing.length = 0;
+        smoothed.forEach(p => currentDrawing.push(p));
+    }
+    
+    isDrawing = false;
+    currentDrawing = null;
+    drawStartPoint = null;
+    rawDrawingPoints = [];
+});
+
+// Touch support for mobile drawing
+window.addEventListener('touchstart', (e) => {
+    // Prevent default to avoid scrolling while drawing
+    if (e.target.closest('.glass-header') || e.target.closest('.glass-nav')) {
+        return; // Allow interaction with nav
+    }
+    
+    const touch = e.touches[0];
+    isDrawing = true;
+    drawStartPoint = { x: touch.clientX, y: touch.clientY, t: Date.now() };
+    rawDrawingPoints = [drawStartPoint];
+    currentDrawing = rawDrawingPoints;
+    userDrawings.push(currentDrawing);
+    
+    targetMouseX = touch.clientX;
+    targetMouseY = touch.clientY;
+}, { passive: false });
+
+window.addEventListener('touchmove', (e) => {
+    e.preventDefault(); // Prevent scrolling
+    
+    const touch = e.touches[0];
+    targetMouseX = touch.clientX;
+    targetMouseY = touch.clientY;
+    
+    if (isDrawing && rawDrawingPoints) {
+        rawDrawingPoints.push({ x: touch.clientX, y: touch.clientY, t: Date.now() });
+    }
+}, { passive: false });
+
+window.addEventListener('touchend', (e) => {
+    if (isDrawing && currentDrawing && rawDrawingPoints.length > 0) {
+        // Add final point
+        const touch = e.changedTouches[0];
+        rawDrawingPoints.push({ x: touch.clientX, y: touch.clientY, t: Date.now() });
         
         // Smooth the path
         const smoothed = smoothPath(rawDrawingPoints);
@@ -2304,21 +2417,31 @@ function animate() {
     requestAnimationFrame(animate);
 }
 
+// Detect mobile device
+const isMobile = window.matchMedia('(pointer: coarse)').matches || 
+                 window.matchMedia('(max-width: 480px)').matches ||
+                 'ontouchstart' in window;
+
 animate();
 
 // Spawn a new complex architectural vignette periodically
-setInterval(spawnRandomVignette, 1800);
+// Slower rate on mobile for better performance
+const vignetteInterval = isMobile ? 2500 : 1800;
+setInterval(spawnRandomVignette, vignetteInterval);
 
 // Populate several initially to start with a fuller canvas
-for(let i=0; i<4; i++) {
+const initialVignettes = isMobile ? 2 : 4;
+for(let i=0; i<initialVignettes; i++) {
     setTimeout(() => spawnRandomVignette(), i * 200);
 }
 
 // Add random lines frequently to fill out the empty spaces
-setInterval(addRandomDrawing, 1500);
+const drawingInterval = isMobile ? 2000 : 1500;
+setInterval(addRandomDrawing, drawingInterval);
 
 // Populate a few initial random lines
-for(let i=0; i<15; i++) {
+const initialDrawings = isMobile ? 8 : 15;
+for(let i=0; i<initialDrawings; i++) {
     addRandomDrawing();
     drawings[i].progress = 1; // instantly drawn
 }
